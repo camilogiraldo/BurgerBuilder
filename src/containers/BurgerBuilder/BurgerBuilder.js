@@ -5,28 +5,19 @@ import Burger from "../../components/Burger/Burger";
 import Aux from "../../hoc/Aux/Aux";
 import Modal from "../../components/UI/Modal/Modal";
 import OrderSummary from "../../components/Burger/OrderSummary/OrderSummary";
-import axios from "../../axios-orders";
 import Spinner from "../../components/UI/Spinner/Spinner";
 import withErrorHandler from "../../hoc/withErrorHandler/withErrorHandler";
 import { connect } from "react-redux";
-import * as actionTypes from "../../store/actions";
+import * as burgerBuilderActions from "../../store/actions/index";
+import axios from "../../axios-orders";
 
 class BurgerBuilder extends Component {
   state = {
     purchasing: false,
-    loading: false,
-    error: false
   };
 
   componentDidMount() {
-    // axios
-    //   .get("/ingredients.json")
-    //   .then(response => {
-    //     this.setState({ ingredients: response.data });
-    //   })
-    //   .catch(error => {
-    //     this.setState({ error: true });
-    //   });
+    this.props.onInitIngredients();
   }
 
   purchaseHandler = () => {
@@ -59,7 +50,7 @@ class BurgerBuilder extends Component {
     }
     let orderSummary = null;
 
-    let burger = this.state.error ? (
+    let burger = this.props.error ? (
       <p>Ingredients can't be fetched</p>
     ) : (
       <Spinner />
@@ -87,9 +78,6 @@ class BurgerBuilder extends Component {
         />
       );
     }
-    if (this.state.loading) {
-      orderSummary = <Spinner />;
-    }
 
     return (
       <Aux>
@@ -108,16 +96,18 @@ class BurgerBuilder extends Component {
 const mapStateToProps = state => {
   return {
     ings: state.ingredients,
-    ttPrice: state.totalPrice
+    ttPrice: state.totalPrice,
+    error: state.error
   };
 };
 
 const mapDispatchToProps = dispatch => {
   return {
     onIngredientAdded: ingredient =>
-      dispatch({ type: actionTypes.ADD_INGREDIENT, ingredient: ingredient }),
+      dispatch(burgerBuilderActions.addIngredient(ingredient)),
     onIngredientRemoved: ingredient =>
-      dispatch({ type: actionTypes.REMOVE_INGREDIENT, ingredient: ingredient })
+      dispatch(burgerBuilderActions.removeIngredient(ingredient)),
+      onInitIngredients: () => dispatch(burgerBuilderActions.initIngredients())
   };
 };
 
