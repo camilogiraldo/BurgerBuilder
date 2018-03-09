@@ -8,5 +8,6 @@ export { purchaseBurger, purchaseInit, fetchOrders } from "./order";
 export {
   auth,
   logout,
-  setAuthRedirect
+  setAuthRedirect,
+  authCheckState
 } from './auth'
